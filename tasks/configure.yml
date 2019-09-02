@@ -1,0 +1,47 @@
+---
+- name: find svscan_dir
+  set_fact: {
+    svscan_dir: "{{ svscan_dir | default(default_svscan_dir) }}"
+  }
+
+- name: check if parent is zfs dataset
+  shell: zfs list | grep '\s{{ svscan_dir | dirname }}$' | cut -d ' ' -f1
+  register: services_dataset
+  changed_when: False
+
+- name: create svscan_dir dataset
+  zfs:
+    name: "{{services_dataset.stdout }}/{{ svscan_dir | basename }}"
+    state: present
+    extra_zfs_properties:
+      compression: "lz4"
+  when: services_dataset.rc == 0
+
+- name: create svscan_dir directory
+  file:
+    path: "{{ svscan_dir }}"
+    state: directory
+  when: services_dataset.rc != 0
+
+- name: set svscan_dir permission
+  file:
+    path: "{{ svscan_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: systemd startup script
+  template:
+    src: systemd/system/daemontools_svscan.service
+    dest: /lib/systemd/system/daemontools_svscan.service
+    owner: root
+    group: root
+  when: ansible_service_mgr == 'systemd'
+  register: service
+
+- name: enable daemontools svscan service
+  service:
+    name: daemontools_svscan
+    enabled: yes
+    state: started
+  when: service.changed

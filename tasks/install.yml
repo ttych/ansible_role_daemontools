@@ -1,0 +1,15 @@
+---
+- name: install daemontools packages
+  package:
+    name: '{{ item }}'
+    state: 'present'
+  with_flattened:
+    - '{{ daemontools_packages }}'
+  register: install
+
+- name: disable default service
+  service:
+    name: daemontools
+    enabled: no
+    state: stopped
+  when: install.changed

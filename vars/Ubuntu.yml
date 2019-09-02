@@ -1,0 +1,4 @@
+---
+daemontools_packages:
+  - daemontools
+  - daemontools-run
