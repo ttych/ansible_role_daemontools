@@ -1,4 +1,4 @@
 ---
 daemontools_packages: []
 
-svscan_path: '/services/svscan'
+svscan_dir: '/services/svscan'

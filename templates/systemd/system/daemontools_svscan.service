@@ -2,7 +2,7 @@
 Description=Daemontools service supervision
 
 [Service]
-ExecStart=/usr/bin/svscanboot {{ svscan_path }}
+ExecStart=/usr/bin/svscanboot {{ svscan_dir }}
 Restart=always
 
 [Install]
