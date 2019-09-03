@@ -1,31 +1,31 @@
 ---
-- name: find svscan_dir
+- name: find svscan_path
   set_fact: {
-    svscan_dir: "{{ svscan_dir | default(default_svscan_dir) }}"
+    svscan_path: "{{ svscan_path | default(default_svscan_path) }}"
   }
 
 - name: check if parent is zfs dataset
-  shell: zfs list | grep '\s{{ svscan_dir | dirname }}$' | cut -d ' ' -f1
+  shell: zfs list | grep '\s{{ svscan_path | dirname }}$' | cut -d ' ' -f1
   register: services_dataset
   changed_when: False
 
-- name: create svscan_dir dataset
+- name: create svscan_path dataset
   zfs:
-    name: "{{services_dataset.stdout }}/{{ svscan_dir | basename }}"
+    name: "{{services_dataset.stdout }}/{{ svscan_path | basename }}"
     state: present
     extra_zfs_properties:
       compression: "lz4"
   when: services_dataset.rc == 0
 
-- name: create svscan_dir directory
+- name: create svscan_path directory
   file:
-    path: "{{ svscan_dir }}"
+    path: "{{ svscan_path }}"
     state: directory
   when: services_dataset.rc != 0
 
-- name: set svscan_dir permission
+- name: set svscan_path permission
   file:
-    path: "{{ svscan_dir }}"
+    path: "{{ svscan_path }}"
     owner: root
     group: root
     mode: '0755'

@@ -1,2 +1,2 @@
 ---
-default_svscan_dir: '/services/svscan'
+default_svscan_path: '/services/svscan'
