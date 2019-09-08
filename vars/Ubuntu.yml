@@ -2,3 +2,6 @@
 daemontools_packages:
   - daemontools
   - daemontools-run
+
+daemontools_default_service: 'daemontools'
+daemontools_default_service_dir: '/etc/service'

@@ -1,4 +1,4 @@
 ---
 daemontools_packages: []
-
-svscan_dir: '/services/svscan'
+daemontools_service: 'daemontools'
+daemontools_service_dir: '/etc/service'

@@ -1,6 +1,13 @@
 ---
-- include_tasks: context.yml
+- block:
+    - include_tasks: context.yml
 
-- include_tasks: install.yml
+    - include_tasks: install.yml
 
-- include_tasks: configure.yml
+    - include_tasks: configure.yml
+
+  when: want_daemontools
+
+- name: set has_daemontools
+  set_fact:
+    has_daemontools: "{{ want_daemontools }}"
