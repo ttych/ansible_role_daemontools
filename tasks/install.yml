@@ -9,7 +9,7 @@
 
 - name: disable default service
   service:
-    name: '{{ daemontools_service }}'
+    name: '{{ daemontools_default_service }}'
     enabled: no
     state: stopped
   when: install.changed
