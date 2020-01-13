@@ -1,60 +1,92 @@
 ---
-- name: use daemontools defaults
-  block:
-    - name: use daemontools default service name
-      set_fact:
-        daemontools_service: "{{ daemontools_default_service }}"
-
-  when: daemontools_service_dir == daemontools_default_service_dir
-
-- name: use daemontools custom
-  block:
-
-    - name: use custom svscanboot
-      template:
-        src: svscanboot
-        dest: "{{ daemontools_dir }}/svscanboot"
-        owner: root
-        group: root
-        mode: '0755'
-      register: svscanboot_status
-
-    - name: use daemontools custom service systemd script
-      template:
-        src: systemd/system/daemontools-svscan.service
-        dest: /lib/systemd/system/daemontools-svscan.service
-        owner: root
-        group: root
-      when: ansible_service_mgr == 'systemd'
-      register: daemontools_status
-
-  when: daemontools_service_dir != daemontools_default_service_dir
-
-- name: "set {{ daemontools_service_dir }} permission"
+- name: set svscan directories
   file:
-    path: "{{ daemontools_service_dir }}"
-    owner: root
-    group: root
-    mode: '0755'
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
     state: directory
+  loop:
+    - { path: "{{ daemontools_dir }}", owner: 0, group: 0, mode: "0755" }
+    - { path: "{{ daemontools_svscan_dir }}", owner: 0, group: 0, mode: "0755" }
 
-- name: enable daemontools service
+- name: configure service on FreeBSD
+  include: sysrc.yml entry="{{ daemontools_sysrc_entry }}"
+  loop:
+    - { name: "svscan_enable", value: "YES" }
+    - { name: "svscan_servicedir", value: "{{ daemontools_svscan_dir }}" }
+  loop_control:
+    loop_var: daemontools_sysrc_entry
+  when: ansible_distribution == 'FreeBSD'
+
+- name: start service
   service:
     name: "{{ daemontools_service }}"
-    enabled: yes
     state: started
 
-- block:
-    - name: restart(stop) daemontools service
-      service:
-        name: "{{ daemontools_service }}"
-        enabled: no
-        state: stopped
+# - name: disable default service
+#   service:
+#     name: '{{ daemontools_default_service }}'
+#     enabled: no
+#     state: stopped
+#   when: install.changed
 
-    - name: restart(start) daemontools service
-      service:
-        name: "{{ daemontools_service }}"
-        enabled: yes
-        state: started
+# - name: use daemontools defaults
+#   block:
+#     - name: use daemontools default service name
+#       set_fact:
+#         daemontools_service: "{{ daemontools_default_service }}"
 
-  when: svscanboot_status.changed or daemontools_status.changed
+#   when: daemontools_service_dir == daemontools_default_service_dir
+
+# - name: use daemontools custom
+#   block:
+
+#     - name: use custom svscanboot
+#       template:
+#         src: svscanboot
+#         dest: "{{ daemontools_dir }}/svscanboot"
+#         owner: root
+#         group: root
+#         mode: '0755'
+#       register: svscanboot_status
+
+#     - name: use daemontools custom service systemd script
+#       template:
+#         src: systemd/system/daemontools-svscan.service
+#         dest: /lib/systemd/system/daemontools-svscan.service
+#         owner: root
+#         group: root
+#       when: ansible_service_mgr == 'systemd'
+#       register: daemontools_status
+
+#   when: daemontools_service_dir != daemontools_default_service_dir
+
+# - name: "set {{ daemontools_service_dir }} permission"
+#   file:
+#     path: "{{ daemontools_service_dir }}"
+#     owner: root
+#     group: root
+#     mode: '0755'
+#     state: directory
+
+# - name: enable daemontools service
+#   service:
+#     name: "{{ daemontools_service }}"
+#     enabled: yes
+#     state: started
+
+# - block:
+#     - name: restart(stop) daemontools service
+#       service:
+#         name: "{{ daemontools_service }}"
+#         enabled: no
+#         state: stopped
+
+#     - name: restart(start) daemontools service
+#       service:
+#         name: "{{ daemontools_service }}"
+#         enabled: yes
+#         state: started
+
+#   when: svscanboot_status.changed or daemontools_status.changed

@@ -1,0 +1,5 @@
+---
+daemontools_packages:
+  - daemontools-encore
+
+daemontools_service: svscan

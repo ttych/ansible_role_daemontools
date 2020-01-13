@@ -1,12 +1,9 @@
 ---
 want_daemontools: true
 
-daemontools_default_service_dir: /etc/service
-daemontools_default_service: daemontools
-
 daemontools_packages:
   - daemontools
 
 daemontools_service: daemontools-svscan
-daemontools_dir: /services/daemontools
-daemontools_service_dir: "{{ daemontools_dir }}/svscan"
+daemontools_dir: /services/svscan
+daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"
