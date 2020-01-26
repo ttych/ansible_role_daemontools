@@ -52,7 +52,7 @@
       service:
         name: "{{ daemontools_service }}"
         state: restarted
-      register: (t_svscan.changed or t_svscanboot.changed) and not t_service.changed
+      when: (t_svscan.changed or t_svscanboot.changed) and not t_service.changed
 
   when: ansible_system == 'Linux'
 
