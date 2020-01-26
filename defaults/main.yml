@@ -4,6 +4,6 @@ want_daemontools: true
 daemontools_packages:
   - daemontools
 
-daemontools_service: daemontools-svscan
+daemontools_service: svscan
 daemontools_dir: /services/svscan
 daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"

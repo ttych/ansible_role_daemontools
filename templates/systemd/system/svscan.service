@@ -2,7 +2,7 @@
 Description=Daemontools service supervision
 
 [Service]
-ExecStart={{ daemontools_dir }}/svscanboot {{ daemontools_service_dir }}
+ExecStart={{ daemontools_dir }}/svscanboot {{ daemontools_svscan_dir }}
 Restart=always
 
 [Install]

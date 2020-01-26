@@ -6,7 +6,7 @@ exec </dev/null
 exec >/dev/null
 exec 2>/dev/null
 
-svc -dx {{ daemontools_service_dir }}/* {{ daemontools_service_dir }}/*/log
+svc -dx {{ daemontools_svscan_dir }}/* {{ daemontools_svscan_dir }}/*/log
 
-env - PATH=$PATH svscan {{ daemontools_service_dir }} 2>&1 | \
+env - PATH=$PATH svscan {{ daemontools_svscan_dir }} 2>&1 | \
 env - PATH=$PATH readproctitle service errors: ................................................................................................................................................................................................................................................................................................................................................................................................................
