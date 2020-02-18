@@ -5,6 +5,12 @@ daemontools_packages:
   - daemontools
 
 daemontools_service: svscan
-services_dir: /services
+
 daemontools_dir: "{{ services_dir }}/svscan"
 daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"
+
+daemontools_logger_user: logger
+daemontools_logger_group: logger
+
+
+services_dir: /services
