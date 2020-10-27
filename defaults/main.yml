@@ -12,5 +12,14 @@ daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"
 daemontools_logger_user: logger
 daemontools_logger_group: logger
 
+daemontools_directories_template:
+  - { path: "", owner: root, group: "{{ root_group }}", mode: "0755" }
+  - { path: "/log", owner: root, group: "{{ root_group }}", mode: "0755" }
+  - { path: "/log/main", owner: "{{ daemontools_logger_user }}", group: "{{ root_group }}", mode: "0755" }
+
+daemontools_scripts_template:
+  - { path: run, owner: root, group: "{{ root_group }}", mode: "0755" }
+  - { path: log/run, owner: root, group: "{{ root_group }}", mode: "0755" }
+
 
 service_dir: /service
