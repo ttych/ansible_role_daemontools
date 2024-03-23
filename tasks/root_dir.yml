@@ -25,13 +25,13 @@
     msg: "issue with {{ daemontools_dir }} mountpoint"
   when:
     - daemontools_zfs_try
-    - t_daemontools_zfs_stat.rc != 0 or t_daemontools_zfs_stat.stdout == "" or t_daemontools_zfs_parent_stat.rc != 0 or t_daemontools_zfs_parent_stat.stdout == ""
+    - t_daemontools_zfs_stat.rc != 0 and t_daemontools_zfs_stat.stdout == "" and t_daemontools_zfs_parent_stat.rc != 0 and t_daemontools_zfs_parent_stat.stdout == ""
 
 
 - block:
     - name: "create dataset for {{ daemontools_dir }}"
       zfs:
-        name: "{{ (t_daemontools_zfs_stat.rc == 0) | ternary(t_daemontools_zfs_stat.stdout, t_daemontools_zfs_parent_stat.stdout + '/' + daemontools_dir_name) }}"
+        name: "{{ (t_daemontools_zfs_stat.rc == 0 and t_daemontools_zfs_stat.stdout != '') | ternary(t_daemontools_zfs_stat.stdout, t_daemontools_zfs_parent_stat.stdout + '/' + daemontools_dir_name) }}"
         state: present
         extra_zfs_properties: "{{ daemontools_zfs_dataset_properties }}"  # | combine({ 'mountpoint': daemontools_dir }) }}"
 
