@@ -1,0 +1,40 @@
+---
+
+
+- name: service directory status
+  stat:
+    path: "{{ daemontools_dir }}"
+  register: t_daemontools_stat
+
+- name: service directory zfs status
+  shell: zfs list -H "{{ daemontools_dir }}" | awk '{print $1}'
+  register: t_daemontools_zfs_stat
+  changed_when: no
+
+- name: set parent directory
+  set_fact:
+    daemontools_parent_dir: "{{ daemontools_dir | dirname }}"
+
+- name: service parent directory zfs status
+  shell: zfs list -H "{{ daemontools_parent_dir }}" | awk '{print $1}'
+  register: t_daemontools_zfs_parent_stat
+  changed_when: no
+
+
+- fail:
+    msg: "issue with {{ daemontools_dir }} mountpoint"
+  when:
+    - daemontools_zfs_try
+    - t_daemontools_zfs_stat.rc != 0 or t_daemontools_zfs_stat.stdout == "" or t_daemontools_zfs_parent_stat.rc != 0 or t_daemontools_zfs_parent_stat.stdout == ""
+
+
+- block:
+    - name: "create dataset for {{ daemontools_dir }}"
+      zfs:
+        name: "{{ (t_daemontools_zfs_stat.rc == 0) | ternary(t_daemontools_zfs_stat.stdout, t_daemontools_zfs_parent_stat.stdout + '/' + daemontools_dir_name) }}"
+        state: present
+        extra_zfs_properties: "{{ daemontools_zfs_dataset_properties }}"  # | combine({ 'mountpoint': daemontools_dir }) }}"
+
+  when:
+    - daemontools_zfs_try
+    - (t_daemontools_zfs_stat.rc == 0 and t_daemontools_zfs_stat.stdout != "") or (t_daemontools_zfs_parent_stat.rc == 0 and t_daemontools_zfs_parent_stat.stdout != "")

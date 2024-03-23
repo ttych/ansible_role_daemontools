@@ -1,4 +1,5 @@
 ---
+
 - name: set svscan directories
   file:
     path: "{{ item.path }}"
@@ -12,7 +13,9 @@
 
 
 - name: configure service on FreeBSD
-  include: sysrc.yml entry="{{ daemontools_sysrc_entry }}"
+  include_tasks: sysrc.yml
+  vars:
+    entry: "{{ daemontools_sysrc_entry }}"
   loop:
     - { name: "svscan_enable", value: "YES" }
     - { name: "svscan_servicedir", value: "{{ daemontools_svscan_dir }}" }

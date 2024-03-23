@@ -1,8 +1,7 @@
 ---
-- name: install daemontools packages
+
+- name: install daemontools
   package:
-    name: '{{ item }}'
+    name: '{{ daemontools_packages | flatten }}'
     state: 'present'
-  with_flattened:
-    - '{{ daemontools_packages }}'
-  register: install
+  register: t_daemontools_install

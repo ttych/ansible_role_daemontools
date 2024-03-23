@@ -6,7 +6,8 @@ daemontools_packages:
 
 daemontools_service: svscan
 
-daemontools_dir: "{{ service_dir }}/svscan"
+daemontools_dir_name: svscan
+daemontools_dir: "{{ service_dir }}/{{ daemontools_dir_name }}"
 daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"
 
 daemontools_logger_user: logger
@@ -20,6 +21,16 @@ daemontools_directories_template:
 daemontools_scripts_template:
   - { path: run, owner: root, group: "{{ root_group }}", mode: "0755" }
   - { path: log/run, owner: root, group: "{{ root_group }}", mode: "0755" }
+
+
+daemontools_zfs_try: yes
+daemontools_zfs_dataset_properties:
+  setuid: off
+  compression: "lz4"
+  sharenfs: off
+  sharesmb: off
+  atime: off
+  relatime: off
 
 
 service_dir: /service

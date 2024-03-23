@@ -4,6 +4,8 @@
 
     - include_tasks: install.yml
 
+    - include_tasks: root_dir.yml
+
     - include_tasks: configure.yml
 
   when: want_daemontools
